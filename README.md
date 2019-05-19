@@ -2,7 +2,7 @@
 
 ### 1. webpackBasics工程
     
-    基础入门配置
+    基础入门配置，[博客地址](https://www.jianshu.com/p/cf244f6e7c7d)
 ```
 // 打包
 npm run build or npm run build:node

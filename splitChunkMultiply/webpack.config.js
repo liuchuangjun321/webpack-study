@@ -1,15 +1,16 @@
 const path = require("path");
 const webpack = require('webpack');
+const glob = require('glob');
 const CleanWebpackPlugin = require('clean-webpack-plugin'); // 对每次打包后的缓存文件进行删除确保每次都是最新的
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextWebpackPligin = require('extract-text-webpack-plugin');
 const PurifycssWebpack = require('purifycss-webpack');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const glob = require('glob');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // 配置抽离css文件。目的是避免css文件和js文件混在一起。导致bundle.js文件过大，有可能导致加载时延过大。
 const lessExtract = new ExtractTextWebpackPligin({
-    filename: 'css/index.css',
+  filename: 'css/index.css',
 });
 
 module.exports = {
@@ -21,7 +22,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, "dist"),
-    filename: "[name].js"
+    filename: "[name].[hash:8].bundle.js"
   },
   devtool: 'inline-source-map', // 使用 source map
   devServer: {
@@ -34,30 +35,62 @@ module.exports = {
   plugins: [
     lessExtract,
     new HtmlWebpackPlugin({
-      template: './src/index.html',
-      title: 'webpack测试',
-      hash: true,
-      minify: {
-        removeAttributeQuotes: true, // 去除双引号
-        collapseWhitespace: true, // 合并代码到一行
-      }
-    }),
+			template: './src/index.html',
+			title: 'webpack测试',
+			hash: true,
+			filename: 'pageA.html',
+			chunks: ['pageA'],
+			minify: process.env.NODE_ENV === "development" ? false : {
+				removeAttributeQuotes: true, // 去除双引号
+				collapseWhitespace: true, // 合并代码到一行
+			}
+		}),
+		new HtmlWebpackPlugin({
+			template: './src/index.html',
+			title: 'webpack测试',
+			hash: true,
+			filename: 'pageB.html',
+			chunks: ['pageB'],
+			minify: process.env.NODE_ENV === "development" ? false : {
+				removeAttributeQuotes: true, // 去除双引号
+				collapseWhitespace: true, // 合并代码到一行
+			}
+		}),
+		new HtmlWebpackPlugin({
+			template: './src/index.html',
+			title: 'webpack测试',
+			hash: true,
+			filename: 'pageC.html',
+			chunks: ['pageC'],
+			minify: process.env.NODE_ENV === "development" ? false : {
+				removeAttributeQuotes: true, // 去除双引号
+				collapseWhitespace: true, // 合并代码到一行
+			}
+		}),
     new PurifycssWebpack({
       paths: glob.sync(path.resolve('src/*.html'))
     }),
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(), // 每次修改代码在开发环境的时候会自动刷新页面
     new OptimizeCSSAssetsPlugin(),
+    new BundleAnalyzerPlugin()
   ],
   optimization: {
     splitChunks: {
       chunks: "all",
       cacheGroups: {
+        // vendors: {
+        //   test: /[\\/]node_modules[\\/]/,  // 匹配node_modules目录下的文件
+        //   priority: 5  // 优先级配置项
+        // },
+        // 打包重复出现的代码，minChunks: 2 && minSize: 0
         commons: {
           chunks: "initial",
           minChunks: 2,
-          maxInitialRequests: 5, // The default limit is too small to showcase the effect
-          minSize: 0, // 默认是30kb, This is example is too small to create commons chunks,
+          name: "commons",
+          maxInitialRequests: 5,
+          minSize: 0, // 默认是30kb,
+          priority: 2,
         },
         reactBase: {
           test: (module) => {
@@ -66,12 +99,12 @@ module.exports = {
           chunks: "initial",
           name: "reactBase",
           priority: 10,
-        },
+        }
       }
     },
-    // runtimeChunk: {
-    //   name: "manifest"
-    // }
+    runtimeChunk: {
+      name: "manifest"
+    }
   },
   module: {
     rules: [

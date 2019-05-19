@@ -10,7 +10,7 @@ const glob = require('glob');
 
 // 配置抽离css文件。目的是避免css文件和js文件混在一起。导致bundle.js文件过大，有可能导致加载时延过大。
 const lessExtract = new ExtractTextWebpackPligin({
-    filename: 'css/index.css',
+    filename: 'css/index.css', // or [name].min.css
 });
 
 module.exports = {

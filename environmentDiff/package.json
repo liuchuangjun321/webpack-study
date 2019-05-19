@@ -1,28 +1,36 @@
 {
-  "name": "splitChunk-Multi",
+  "name": "environmentDiff",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --open --hot --inline",
-    "start:node": "node scripts/webpack-dev-server.js"
+    "start": "NODE_ENV=development node scripts/webpack-dev-server.js",
+    "build:dev": "webpack --config webpackConfig/webpack.dev.config.js",
+    "build:prod": "webpack --config webpackConfig/webpack.prod.config.js"
   },
   "keywords": [],
   "author": "大闯仔儿",
   "license": "MIT",
   "devDependencies": {
     "clean-webpack-plugin": "^2.0.2",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^2.1.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "html-webpack-plugin": "^3.2.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss-loader": "^3.0.0",
     "purify-css": "^1.2.5",
     "purifycss-webpack": "^0.7.0",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2",
     "webpack": "^4.10.1",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^2.1.4",
-    "webpack-dev-server": "^3.3.1"
+    "webpack-dev-server": "^3.3.1",
+    "webpack-merge": "^4.1.2"
   },
   "dependencies": {
     "element-ui": "^2.4.0",
